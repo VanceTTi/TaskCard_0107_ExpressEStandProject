@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/add.css"/>
+	</head>
+	<body>
+		<div id="app">
+			<div class="header">
+				<span>修改快递信息</span>
+			</div>
+			<div class="content">
+				<table>	
+					<tr>
+						<td class="text-right">运单号</td><td class="content_right">
+						<!--添加id="number"-->
+						<input class="input inline-input" placeholder="请输入运单号码" id="number">
+						<!--添加id="find"-->
+						<span class="btn btn-info" id="find">立即查找</span></td>
+					</tr>
+				</table>
+			</div>
+			
+			
+			<div class="header">
+				<span>查找信息如下</span>
+			</div>
+			<div class="content">
+				<table>
+					<tr>
+						<td class="text-right">快递单号</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+					</tr>
+					<tr>
+						<td class="text-right">快递公司</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+					</tr>
+					<tr>
+						<td class="text-right">收货人姓名</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+					</tr>
+					<tr>
+						<td class="text-right">手机号码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+					</tr>
+					<tr>
+						<td class="text-right">快递状态</td><td class="content_right"><input type="radio" name="status">已签收  <input name="status" type="radio">未签收</td>
+					</tr>
+					<tr>
+						<td></td><td class="content_right"><span class="btn btn-info" id="update">立即修改</span> <span class="btn">重置</span> </td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</body>
+
+	<script src="/qrcode/jquery2.1.4.js"></script>
+	<script src="/layer/layer.js"></script>
+
+
+	<script>
+		//隐藏搜索出来的内容
+		$(".header:eq(1),.content:eq(1)").hide();
+		/*
+		因为修改的内容是根据id改的，所以加expressId来放在全局的位置。
+		 */
+		var expressId = null;
+		var g_userPhone = null;
+		$(function (){
+			<!--下面是查询显示部分，先查询再进行修改操作-->
+			$("#find").click(function (){//当点击触发事件
+				var windowId = layer.load();//加载的图像弹出
+				var number = $("#number").val();
+				$.getJSON("/express/find.do",{number:number},function (data){
+					layer.close(windowId);//关闭加载图像
+					layer.msg(data.result);//使用layer弹窗返回result的字样提示:如：查询成功
+					//上面data就是后台传过来json
+					if (data.status == 0) {
+						$(".header:eq(1),.content:eq(1)").fadeIn(1000);//fadeIn(1000)在1s内缓慢淡出查询的结果，实际就是将上面隐藏的显示出来
+						expressId = data.data.id;//第一个data是msg的data，第二data是msg中的data属性，这个data中有id，number......
+						g_userPhone = data.data.userPhone;
+						$("input:eq(1)").val(data.data.number);
+						$("input:eq(2)").val(data.data.company);
+						$("input:eq(3)").val(data.data.username);
+						$("input:eq(4)").val(data.data.userPhone);
+						//判断status是不是等于0
+						if (data.data.status == 0) {
+							//未签收
+							$(".status:eq(1)").prop("checked",true);
+						} else {
+							//已签收
+							$(".status:eq(0)").prop("checked",true);
+						}
+					} else {
+
+					}
+				});
+			});
+
+			<!--修改页面-->
+			$("#update").click(function (){
+				var windowId = layer.load();//弹窗转圈
+				//获取数据，
+				var number = $("input:eq(1)").val();
+				var company = $("input:eq(2)").val();
+				var username = $("input:eq(3)").val();
+				var userPhone = $("input:eq(4)").val();
+				//-------------------------------------------------
+				//这个逻辑可以看到ExpressService中update方法描述
+				var status = $(".status:checked").val();
+				var express = {
+					id:expressId,
+					number:number,
+					company:company,
+					username:username,
+					status:status
+				}
+				if (userPhone == g_userPhone){
+					express.userPhone = userPhone;
+				}
+				//-----------------------------------------------
+				//发送给后台
+				$.getJSON("/express/update.do",express,function (data){//接收后台发送的数据json
+					layer.close(windowId);//关闭转圈
+					layer.msg(data.result)//弹窗提示，后台发送的消息，如：修改成功
+					if (data.status == 0){
+						//修改成功的，直接隐藏
+						$(".header:eq(1),.content:eq(1)").hide();
+					}
+				})
+			});
+
+		});
+	</script>
+
+</html>

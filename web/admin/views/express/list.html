@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/list.css"/>
+		<link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.17.1/bootstrap-table.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.17.1/bootstrap-table.min.js"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.17.1/locale/bootstrap-table-zh-CN.min.js"></script>
+	</head>
+	<body>
+		<table id="express_list"></table>
+		<script>
+			$(function (){//网页加载完之后再加载里面的
+				$("#express_list").bootstrapTable({
+					url:"/express/list.do",//数据地址，请求的地址
+					striped:true,//是否显示行的间隔
+					pageNumber:1,//初始化加载第几页（一打开网页就加载第一页）
+					pagination:true,//是否分页
+					/*服务器分页
+					（解析：这里是有服务器端分页和客户端分页，
+					如果是客户端分页那么后端就可以不用分页的方法，
+					直接一次性查出全部让前端自己分页，但是这样的弊端就是第一次加载会很缓慢，
+					因为是全部查询出来再分页，如果是服务端分页，
+					那么每一次点击页数会重新查询一部分数据出来显示）
+					 */
+					sidePagination:'server',
+					pageSize:5,    //每页显示5个
+					pageList:[5,10,20],//可选单页记录数,用户可以选择每页显示多少个，这里有5,10,20个来选择
+					showRefresh:true,//是否显示 刷新 按钮
+					/*
+					将数据传输给服务器，将参数以function（）的方式来指定，
+					将offset、pageNumber这两个数据存到temp对象中，
+					params就是bootstrapTable控件中的数据。
+					 */
+					queryParams:function (params){//这个操作就是将数据给到后台服务器
+						var temp = {
+							offset:params.offset,
+							pageNumber: params.limit
+						};
+						return temp;
+					},
+					columns:[//固定列
+						{
+							//将id取出来，作为编号来显示
+							title:"编号",//显示文字
+							field:"id",//服务器给字段，对应
+							sortable:true//排序表格
+						},
+						{
+							title:"单号",
+							field:"number",
+							sortable:true
+						},
+						{
+							title:"姓名",
+							field:"userName",
+							sortable:true
+						},
+						{
+							title:"电话",
+							field:"userPhone",
+							sortable:true
+						},
+						{
+							title:"快递公司",
+							field:"company",
+							sortable:true
+						},
+						{
+							title:"取件码",
+							field:"code",
+							sortable:true
+						},
+						{
+							title:"入库时间",
+							field:"inTime",
+							sortable:true
+						},
+						{
+							title:"出库时间",
+							field:"outTime",
+							sortable:true
+						},
+						{
+							title:"状态",
+							field:"status",
+							sortable:true
+						},
+						{
+							title:"录入人电话",
+							field:"sysPhone",
+							sortable:true
+						}
+					]
+				});
+			});
+		</script>
+	</body>
+</html>

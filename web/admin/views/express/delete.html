@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../../css/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/add.css"/>
+	</head>
+	<body>
+		<div id="app">
+			<div class="header">
+				<span>删除快递信息</span>
+			</div>
+			<div class="content">
+				<table>	
+					<tr>
+						<td class="text-right">运单号</td><td class="content_right">
+						<input class="input inline-input" placeholder="请输入运单号码" id="number">
+						<span class="btn btn-info" id="find">立即查找</span></td>
+					</tr>
+				</table>
+			</div>
+			
+			<div class="header">
+				<span>查找信息如下</span>
+			</div>
+			<div class="content">
+				<table>
+					<tr>
+						<td class="text-right">快递单号</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+					</tr>
+					<tr>
+						<td class="text-right">快递公司</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+					</tr>
+					<tr>
+						<td class="text-right">收货人姓名</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+					</tr>
+					<tr>
+						<td class="text-right">手机号码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+					</tr>
+					<tr>
+						<td class="text-right">快递状态</td><td class="content_right"><input type="radio" name="status" id="status">已签收 </td>
+					</tr>
+					<tr>
+						<td></td><td class="content_right"><span class="btn btn-info" id="delete">立即删除</span>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</body>
+	<script src="/qrcode/jquery2.1.4.js"></script>
+	<script src="/layer/layer.js"></script>
+
+	<!--下面是查询显示部分，先查询再进行删除操作-->
+	<script>
+		//隐藏搜索出来的内容
+		$(".header:eq(1),.content:eq(1)").hide();
+		/*
+		因为修改的内容是根据id改的，所以加expressId来放在全局的位置。
+		 */
+		var expressId = null;
+		$(function (){
+			$("#find").click(function (){//当点击触发事件
+				var windowId = layer.load();//加载的图像弹出
+				var number = $("#number").val();
+				$.getJSON("/express/find.do",{number:number},function (data){
+					layer.close(windowId);//关闭加载图像
+					layer.msg(data.result);//使用layer弹窗返回result的字样提示:如：查询成功
+					//上面data就是后台传过来json
+					if (data.status == 0) {
+						$(".header:eq(1),.content:eq(1)").fadeIn(1000);//fadeIn(1000)在1s内缓慢淡出查询的结果，实际就是将上面隐藏的显示出来
+						expressId = data.data.id;//第一个data是msg的data，第二data是msg中的data属性，这个data中有id，number......
+						$("input:eq(1)").val(data.data.number);
+						$("input:eq(2)").val(data.data.company);
+						$("input:eq(3)").val(data.data.username);
+						$("input:eq(4)").val(data.data.userPhone);
+						//设置属性  disabled：禁止修改
+						$("input:eq(1),input:eq(2),input:eq(3),input:eq(4)").prop("disabled",true)
+						//判断status是不是等于0
+						if (data.data.status == 0) {
+							//未签收
+							$("#status").html("未签收");
+						} else {
+							//已签收
+							$("#status").html("已签收");
+						}
+					} else {
+
+					}
+				});
+			});
+
+			<!--删除操作界面显示-->
+			$("#delete").click(function (){
+				var windowId = layer.load();
+				//只需要传一个id，根据id来进行删除操作。
+				$.getJSON("/express/delete.do",{id:expressId},function (data){
+					layer.close(windowId)
+					layer.msg(data.result);
+					if (data.status == 0) {
+						$(".header:eq(1),.content:eq(1)").hide();
+					}
+				});
+			});
+
+
+		});
+	</script>
+</html>
