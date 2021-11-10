@@ -7,6 +7,58 @@
     <link rel="stylesheet" href="../../assets/css/view.css"/>
     <title></title>
 </head>
+    <script>
+        /*
+         * 单号不能为空
+         */
+        function isNumber() {
+            var number = $("input:eq(0)").val();//获取到number的输入值
+            if (number == "") {
+                layer.open({
+                    title:'提示',
+                    content:'单号不能为空！'
+                });
+                return false;
+            }
+            return true;
+        }
+        /*
+         * 用户名
+         * 收件人姓名
+         */
+        function isUserName() {
+            var username = $("input:eq(2)").val();//获取到number的输入值
+            if (username == "") {
+                layer.open({
+                    title:'提示',
+                    content:'用户名不能为空！'
+                });
+                return false;
+            }
+            return true;
+        }
+        /*
+         * 电话号码
+         */
+        function isPhoneNumber() {
+            var phonenumber = $("input:eq(3)").val();//获取到number的输入值
+            var reg=/^((0\d{2,3}-\d{7,8})|(1[345789]\d{9}))$/;
+            if (phonenumber == "") {
+                layer.open({
+                    title:'提示',
+                    content:'电话不能为空！'
+                });
+                return false;
+            } else if (!reg.test(phonenumber)) {
+                layer.open({
+                    title:'提示',
+                    content:'输入内容不合法，请输入正确的电话！'
+                });
+                return false;
+            }
+            return true;
+        }
+    </script>
 <body class="layui-view-body">
     <div class="layui-content">
         <div class="layui-row">
@@ -47,7 +99,7 @@
                       <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                     </div>
                   </div>
-                </form>  
+                </form>
             </div>
         </div>
     </div>
@@ -63,41 +115,60 @@
     <!--添加脚本，控制id=“form”-->
     <script>
         $(function (){//页面加载完后加载
+
+            //单号：绑定失去焦点事件
+            $("input:eq(0)").blur(function (){
+                isNumber();
+            });
+            //用户名：绑定失去焦点事件
+            $("input:eq(2)").blur(function (){
+                isUserName();
+            });
+            //电话：绑定失去焦点事件
+            $("input:eq(3)").blur(function (){
+                isPhoneNumber();
+            });
            $("#form").submit(function (){//submit点击提交后触发
-               var windowId = layer.load();//转圈
-               //:eq(index)匹配一个给定索引值的元素
-               var number = $("input:eq(0)").val();
-               var company = $("input:eq(1)").val();
-               var username = $("input:eq(2)").val();
-               var userPhone = $("input:eq(3)").val();
-               $.post("/express/insert.do",{
-                   //key(新起的名字):value（上面的值）
-                   number:number,
-                   company:company,
-                   username:username,
-                   userPhone:userPhone
-               },function (data){//后端传来的数据就是这里的data
-                   //等后端传来数据后，关闭windowId的窗口
-                   layer.close(windowId);
-                   //提示：录入成功
-                   layer.msg(data.result);
-                    if(data.status==0){
-                        //录入成功
-                        //成功之后就将输入框恢复默认
-                        // $("input:eq(0)").val("");
-                        // $("input:eq(1)").val("");
-                        // $("input:eq(2)").val("");
-                        // $("input:eq(3)").val("");
-                        //也可以使用两行代码
-                        $("input").val("");//所有input置空
-                        $("input:eq(1)").val("顺丰快递");//单独给1默认为顺丰快递
-                        //
-                    } else {
-                        //录入失败
-                        //直接上面有提示所以就不用写了
-                    }
-               });
-               return false;
+
+               if (isNumber()&&isUserName()&&isPhoneNumber()) {
+                   var windowId = layer.load();//转圈
+                   //:eq(index)匹配一个给定索引值的元素
+                   var number = $("input:eq(0)").val();
+                   var company = $("input:eq(1)").val();
+                   var username = $("input:eq(2)").val();
+                   var userPhone = $("input:eq(3)").val();
+                   $.post("/express/insert.do", {
+                       //key(新起的名字):value（上面的值）
+                       number: number,
+                       company: company,
+                       username: username,
+                       userPhone: userPhone
+                   }, function (data) {//后端传来的数据就是这里的data
+                       //等后端传来数据后，关闭windowId的窗口
+                       layer.close(windowId);
+                       //提示：录入成功
+                       layer.msg(data.result);
+                       if (data.status == 0) {
+                           //录入成功
+                           //成功之后就将输入框恢复默认
+                           // $("input:eq(0)").val("");
+                           // $("input:eq(1)").val("");
+                           // $("input:eq(2)").val("");
+                           // $("input:eq(3)").val("");
+                           //也可以使用两行代码
+                           $("input").val("");//所有input置空
+                           $("input:eq(1)").val("顺丰快递");//单独给1默认为顺丰快递
+                           //
+                       } else {
+                           //录入失败
+                           //直接上面有提示所以就不用写了
+                       }
+                   });
+                   return false;
+               } else {
+                   return false;
+               }
+
            });
         });
     </script>

@@ -14,7 +14,11 @@
 			<div class="content">
 				<table>	
 					<tr>
-						<td class="text-right">手机号码</td><td class="content_right"><input class="input inline-input" placeholder="请输入手机号码"> <span class="btn btn-info">立即查找</span></td>
+						<td class="text-right">手机号码</td><td class="content_right">
+						<!--添加id="phone"-->
+						<input class="input inline-input" placeholder="请输入手机号码" id="phone">
+						<!--添加id="find"-->
+						<span class="btn btn-info" id="find">立即查找</span></td>
 					</tr>
 				</table>
 			</div>
@@ -29,19 +33,72 @@
 						<td class="text-right">姓名</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
 					</tr>
 					<tr>
-						<td class="text-right">手机号码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+						<td class="text-right">手机号码</td><td class="content_right"><input class="input" placeholder="请输入手机号码"></td>
 					</tr>
 					<tr>
-						<td class="text-right">身份证号码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+						<td class="text-right">身份证号码</td><td class="content_right"><input class="input" placeholder="请输入身份证号码"></td>
 					</tr>
 					<tr>
-						<td class="text-right">密码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+						<td class="text-right">密码</td><td class="content_right"><input class="input" placeholder="请输入密码"></td>
 					</tr>
 					<tr>
-						<td></td><td class="content_right"><span class="btn btn-info">立即删除</span> <span class="btn">重置</span> </td>
+						<td></td><td class="content_right"><span class="btn btn-info" id="delete">立即删除</span> </td>
 					</tr>
 				</table>
 			</div>
 		</div>
 	</body>
+	<script src="/qrcode/jquery2.1.4.js"></script>
+	<script src="/layer/layer.js"></script>
+
+	<!--下面是查询显示部分，先查询再进行删除操作-->
+	<script>
+		//隐藏搜索出来的内容
+		$(".header:eq(1),.content:eq(1)").hide();
+		/*
+		因为修改的内容是根据id改的，所以加expressId来放在全局的位置。
+		 */
+		var courierId = null;
+		$(function (){
+			<!--下面是查询显示部分，先查询再进行修改操作-->
+			$("#find").click(function (){//当点击触发事件
+				var windowId = layer.load();//加载的图像弹出
+				var phone = $("#phone").val();
+				$.getJSON("/courier/find.do",{phone:phone},function (data){
+					layer.close(windowId);//关闭加载图像
+					layer.msg(data.result);//使用layer弹窗返回result的字样提示:如：查询成功
+					//上面data就是后台传过来json
+					if (data.status == 0) {
+						$(".header:eq(1),.content:eq(1)").fadeIn(1000);//fadeIn(1000)在1s内缓慢淡出查询的结果，实际就是将上面隐藏的显示出来
+						courierId = data.data.courierId;
+						//后台获取的数据显示到页面上
+						$("input:eq(1)").val(data.data.courierName);
+						$("input:eq(2)").val(data.data.courierPhone);
+						$("input:eq(3)").val(data.data.courierIdCard);
+						$("input:eq(4)").val(data.data.courierPassword);
+					} else {
+
+					}
+				});
+			});
+
+			<!--删除操作界面显示-->
+			$("#delete").click(function (){
+				var windowId = layer.load();
+				//只需要传一个id，根据id来进行删除操作。
+				$.getJSON("/courier/delete.do",{courierId:courierId},function (data){
+					layer.close(windowId)
+					layer.msg(data.result);
+					if (data.status == 0) {
+						$(".header:eq(1),.content:eq(1)").hide();
+					}
+				});
+			});
+
+
+		});
+	</script>
+
+
+
 </html>

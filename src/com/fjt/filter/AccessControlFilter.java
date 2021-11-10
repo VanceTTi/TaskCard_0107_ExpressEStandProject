@@ -29,6 +29,5 @@ public class AccessControlFilter implements Filter {
         } else {
             response.sendError(404,"很遗憾，权限不足");
         }
-        chain.doFilter(req, resp);
     }
 }

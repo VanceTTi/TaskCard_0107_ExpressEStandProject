@@ -1,6 +1,7 @@
 package com.fjt.bean;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * 这个实体类专门为主页面显示日期时间而新增的
@@ -113,5 +114,34 @@ public class BootStrapTableExpress {
 
     public void setSysPhone(String sysPhone) {
         this.sysPhone = sysPhone;
+    }
+
+    @Override
+    public String toString() {
+        return "BootStrapTableExpress{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", userName='" + userName + '\'' +
+                ", userPhone='" + userPhone + '\'' +
+                ", company='" + company + '\'' +
+                ", code='" + code + '\'' +
+                ", inTime='" + inTime + '\'' +
+                ", outTime='" + outTime + '\'' +
+                ", status='" + status + '\'' +
+                ", sysPhone='" + sysPhone + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BootStrapTableExpress that = (BootStrapTableExpress) o;
+        return id == that.id && Objects.equals(number, that.number) && Objects.equals(userName, that.userName) && Objects.equals(userPhone, that.userPhone) && Objects.equals(company, that.company) && Objects.equals(code, that.code) && Objects.equals(inTime, that.inTime) && Objects.equals(outTime, that.outTime) && Objects.equals(status, that.status) && Objects.equals(sysPhone, that.sysPhone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, userName, userPhone, company, code, inTime, outTime, status, sysPhone);
     }
 }
