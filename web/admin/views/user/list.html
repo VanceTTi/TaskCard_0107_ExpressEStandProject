@@ -5,48 +5,70 @@
 		<title></title>
 		<link rel="stylesheet" type="text/css" href="../../../../css/reset.css"/>
 		<link rel="stylesheet" type="text/css" href="../../css/list.css"/>
+		<link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.17.1/bootstrap-table.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.17.1/bootstrap-table.min.js"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.17.1/locale/bootstrap-table-zh-CN.min.js"></script>
 	</head>
 	<body>
-		<table class="tab tab-hover">
-			<tr class="active">
-				<th>编号</th><th>昵称</th><th>手机号码</th><th>密码</th><th>注册时间</th><th>上次登陆时间</th><th>操作</th>
-			</tr>
-			<tr>
-				<td>1001</td>
-				<td>帅哥一枚</td>
-				<td>13843838438</td>
-				<td>******</td>
-				<td>2088-1-1</td>
-				<td>2088-1-1</td>
-				<td><span class="btn-danger">删除</span></td>
-			</tr>
-			<tr>
-				<td>1001</td>
-				<td>帅哥一枚</td>
-				<td>13843838438</td>
-				<td>******</td>
-				<td>2088-1-1</td>
-				<td>2088-1-1</td>
-				<td><span class="btn-danger">删除</span></td>
-			</tr>
-			<tr>
-				<td>1001</td>
-				<td>帅哥一枚</td>
-				<td>13843838438</td>
-				<td>******</td>
-				<td>2088-1-1</td>
-				<td>2088-1-1</td>
-				<td><span class="btn-danger">删除</span></td>
-			</tr>
-			<tr>
-				<td>1001</td>
-				<td>帅哥一枚</td>
-				<td>13843838438</td>
-				<td>******</td>
-				<td>2088-1-1</td>
-				<td>2088-1-1</td>
-				<td><span class="btn-danger">删除</span></td>
-			</tr>
-		</table>
+		<table id="user_list"></table>
+		<script>
+			$(function (){//网页加载
+				$("#user_list").bootstrapTable({
+					url:"/user/list.do",
+					striped:true,//是否显示行间距   striped：条纹
+					pageNumber:1,//初始化加载第几页   pageNumber：页码
+					pagination:true,//是否分页    pagination：分页
+					sidePagination:'server',  //客户端分页或者服务器端分页
+					pageSize:2,    //每页显示5个
+					pageList:[2,10,20],//可选单页记录数,用户可以选择每页显示多少个，这里有5,10,20个来选择
+					showRefresh:true,//是否显示 刷新 按钮
+					queryParams:function (params){//这个操作就是将数据给到后台服务器
+						var temp = {
+							offset:params.offset,
+							pageNumber: params.limit
+						};
+						return temp;
+					},
+					columns:[//固定列
+						{
+							//将id取出来，作为编号来显示
+							title:"编号",//显示文字
+							field:"uid",//服务器给字段，对应
+							sortable:true//排序表格
+						},
+						{
+							title:"昵称",
+							field:"nickname",
+							sortable:true
+						},
+						{
+							title:"手机号码",
+							field:"uPhone",
+							sortable:true
+						},
+						{
+							title:"密码",
+							field:"uPassword",
+							sortable:true
+						},
+						{
+							title:"注册时间",
+							field:"registrationDate",
+							sortable:true
+						},
+						{
+							title:"上次登录时间",
+							field:"LastLoginTime",
+							sortable:true
+						},
+					]
+				});
+			});
+
+		</script>
+
 	</body>
 </html>

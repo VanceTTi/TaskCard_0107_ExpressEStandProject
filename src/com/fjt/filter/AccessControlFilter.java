@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter({"/admin/index.html","/amdin/views/*","/express/*"})
+@WebFilter({"/admin/index.html","/amdin/views/*","/express/*","/courier/*"})
 public class AccessControlFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
     }

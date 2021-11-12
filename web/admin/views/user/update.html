@@ -9,39 +9,104 @@
 	<body>
 		<div id="app">
 			<div class="header">
-				<span>修改快递员</span>
+				<span>修改用户信息</span>
 			</div>
 			<div class="content">
-				<table>	
+				<table>
 					<tr>
-						<td class="text-right">手机号码</td><td class="content_right"><input class="input inline-input" placeholder="请输入手机号码"> <span class="btn btn-info">立即查找</span></td>
+						<td class="text-right">手机号码</td><td class="content_right">
+						<!--添加id="phone"-->
+						<input id="phone" class="input inline-input" placeholder="请输入手机号码">
+						<!--添加id="find"-->
+						<span id="find" class="btn btn-info">立即查找</span></td>
 					</tr>
 				</table>
 			</div>
-			
-			
+
+
 			<div class="header">
 				<span>查找信息如下</span>
 			</div>
 			<div class="content">
 				<table>
 					<tr>
-						<td class="text-right">姓名</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+						<td class="text-right">昵称</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
 					</tr>
 					<tr>
-						<td class="text-right">手机号码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+						<td class="text-right">手机号码</td><td class="content_right"><input class="input" placeholder="请输入手机号"></td>
 					</tr>
 					<tr>
-						<td class="text-right">身份证号码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
+						<td class="text-right">密码</td><td class="content_right"><input class="input" placeholder="请输入密码"></td>
 					</tr>
 					<tr>
-						<td class="text-right">密码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
-					</tr>
-					<tr>
-						<td></td><td class="content_right"><span class="btn btn-info">立即修改</span> <span class="btn">重置</span> </td>
+						<!--添加id="update"-->
+						<td></td><td class="content_right"><span class="btn btn-info" id="update">立即修改</span>
+						<span class="btn">重置</span> </td>
 					</tr>
 				</table>
 			</div>
 		</div>
 	</body>
+
+	<!--导入script-->
+	<script src="/qrcode/jquery2.1.4.js"></script>
+	<script src="/layer/layer.js"></script>
+
+	<script>
+		//隐藏搜索出来的内容
+		$(".header:eq(1),.content:eq(1)").hide();
+		/*
+		因为修改的内容是根据id改的，所以加userId来放在全局的位置。
+		 */
+		var userId = null;
+		$(function (){
+			<!--下面是查询显示部分，先查询再进行修改操作-->
+			$("#find").click(function (){//当点击触发事件
+				var windowId = layer.load();//加载的图像弹出
+				var phone = $("#phone").val();
+				$.getJSON("/user/find.do",{phone:phone},function (data){
+					layer.close(windowId);//关闭加载图像
+					layer.msg(data.result);//使用layer弹窗返回result的字样提示:如：查询成功
+					//上面data就是后台传过来json
+					if (data.status == 0) {
+						$(".header:eq(1),.content:eq(1)").fadeIn(1000);//fadeIn(1000)在1s内缓慢淡出查询的结果，实际就是将上面隐藏的显示出来
+						userId = data.data.uid;
+						//后台获取的数据显示到页面上
+						$("input:eq(1)").val(data.data.nickname);
+						$("input:eq(2)").val(data.data.uPhone);
+						$("input:eq(3)").val(data.data.uPassword);
+					} else {
+
+					}
+				});
+			});
+
+			<!--修改页面-->
+			$("#update").click(function (){
+				var windowId = layer.load();//弹窗转圈
+				//获取数据，
+				var nickname = $("input:eq(1)").val();
+				var uPhone = $("input:eq(2)").val();
+				var uPassword = $("input:eq(3)").val();
+				//发送给后台
+				$.getJSON("/user/update.do",{
+					userId:userId,//id来定位需要修改的信息
+					//下面都是页面新的数据传输给后台
+					nickname:nickname,
+					uPhone:uPhone,
+					uPassword:uPassword,
+				},function (data){//接收后台发送的数据json
+					layer.close(windowId);//关闭转圈
+					layer.msg(data.result)//弹窗提示，后台发送的消息，如：修改成功
+					if (data.status == 0){
+						//修改成功的，直接隐藏
+						$(".header:eq(1),.content:eq(1)").hide();
+					}
+				})
+			});
+		});
+
+	</script>
+
+
 </html>
