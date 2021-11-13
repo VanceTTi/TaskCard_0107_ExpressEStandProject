@@ -2,10 +2,9 @@ package com.fjt.controller;
 
 import com.fjt.bean.*;
 import com.fjt.mvc.ResponseBody;
-import com.fjt.service.CourierService;
+
 import com.fjt.service.UserService;
-import com.fjt.util.DateFormatUtil;
-import com.fjt.util.JSONUtil;
+import com.fjt.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -162,6 +161,7 @@ public class UserController {
         String json = JSONUtil.toJSON(msg);
         return json;
     }
+
 
 
 }

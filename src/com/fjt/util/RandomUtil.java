@@ -3,7 +3,7 @@ package com.fjt.util;
 import java.util.Random;
 
 /**
- * 这个工具类，只用来生成随机数
+ * 这个工具类，只用来生成6位随机数
  */
 public class RandomUtil {
     private static Random r = new Random();

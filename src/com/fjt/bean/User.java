@@ -12,7 +12,15 @@ public class User {
     private String uPassword;//密码
     private Timestamp registrationDate;//注册时间
     private Timestamp LastLoginTime;//上次登录时间
-
+    //新增身份属性
+    private boolean user;//用来识别登录时为用户属性
+    //新增get/set方法
+    public boolean isUser() {//其实是is方法，
+        return user;
+    }
+    public void setUser(boolean user) {
+        this.user = user;
+    }
 
     public User() {
     }
