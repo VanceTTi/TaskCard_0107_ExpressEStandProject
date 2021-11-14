@@ -70,6 +70,7 @@
 			$.getJSON("/wx/findExpressByUserPhone.do",null,function (data) {
 				var data1 = data.status0;//获取到json格式
 				for (i=0;i<data1.length;i++){
+					//"/wx/createQrcode.do?type=express&code="中的type指定是快递的二维码
 					var item = "<div class=\"item\">\n" +
 							"\t\t\t<div class=\"imte_top\"><span>"+data1[i].inTime+"</span></div>\n" +
 							"\t\t\t<div class=\"item_content\">\n" +
@@ -86,7 +87,7 @@
 							"\t\t\t\t</div>\n" +
 							"\t\t\t\t<hr>\n" +
 							"\t\t\t\t<div class=\"item_content_bottom\">\n" +
-							"\t\t\t\t\t<a href=\"qrcode.do?code="+data1[i].code+"\">二维码</a>\n" +
+							"\t\t\t\t\t<a href=\"/wx/createQRCode.do?type=express&code="+data1[i].code+"\">二维码</a>\n" +
 							"\t\t\t\t</div>\n" +
 							"\t\t\t</div>\n" +
 							"\t\t</div>";
