@@ -1,5 +1,6 @@
 package com.fjt.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,4 +18,20 @@ public class DateFormatUtil {
     public static String format(Date date){
         return format.format(date);
     }
+
+    /**
+     * parse()：将字符串类型的时间变成日期
+     * getTime()：将日期变成long
+     * @param formatString
+     * @return
+     */
+    public static long toTime(String formatString){
+        try {
+            return  format.parse(formatString).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

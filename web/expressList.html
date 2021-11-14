@@ -53,57 +53,70 @@
 </style>
 </head>
 <body>
-	
-	<div class="content">
-		
-				
-		<div class="item">
-			<div class="imte_top"><span>2019-10-12 12:00</span></div>
-			<div class="item_content">
-				<div class="item_content_top">
-					<div class="item_content_top_1">取件通知</div>
-					<div class="item_content_top_2">2019-10-12 12:00</div>
-					<div class="item_content_top_3">您有一个包裹到e栈了!</div>
-					<div class="item_content_top_4">
-						取件码:<span style="color:#05a">123123</span><br>
-						快递公司:顺丰快递<br>
-						运单号码:123123123213<br>
-						站点电话:13843838438<br>
-						取件地址:学校快件集散中心<br>
-					</div>
-				</div>
-				<hr>
-				<div class="item_content_bottom">
-					<a href="personQRcode.jsp?code=<%=e.getCode()%>">二维码</a>
-				</div>
-			</div>
-		</div>
+	<!--添加id="status0Content"-->
+	<div class="content" id="status0Content">
+
 		
 	</div>
-	<div class="content">
-		
-				
-		<div class="item">
-			<div class="imte_top"><span>2019-10-12 12:00</span></div>
-			<div class="item_content">
-				<div class="item_content_top">
-					<div class="item_content_top_1">取件成功通知</div>
-					<div class="item_content_top_2">2019-10-12 12:00</div>
-					<div class="item_content_top_3">您有一个包裹从e栈取出了!</div>
-					<div class="item_content_top_4">
-						快递公司:顺丰快递<br>
-						运单号码:12313431123<br>
-						站点电话:13843838438<br>
-					</div>
-				</div>
-				<hr>
-				<div class="item_content_bottom">
-					<a href="#">有疑问 ? 点了也没用</a>
-				</div>
-			</div>
-		</div>
-		
-			
+	<div class="content" id="status1Content">
+
+
 	</div>
 </body>
+	<script src="js/jquery.min.js"></script>
+	<script src="layer/layer.js"></script>
+	<script>
+		$(function (){
+			$.getJSON("/wx/findExpressByUserPhone.do",null,function (data) {
+				var data1 = data.status0;//获取到json格式
+				for (i=0;i<data1.length;i++){
+					var item = "<div class=\"item\">\n" +
+							"\t\t\t<div class=\"imte_top\"><span>"+data1[i].inTime+"</span></div>\n" +
+							"\t\t\t<div class=\"item_content\">\n" +
+							"\t\t\t\t<div class=\"item_content_top\">\n" +
+							"\t\t\t\t\t<div class=\"item_content_top_1\">取件通知</div>\n" +
+							"\t\t\t\t\t<div class=\"item_content_top_2\">"+data1[i].inTime+"</div>\n" +
+							"\t\t\t\t\t<div class=\"item_content_top_3\">您有一个包裹到e栈了!</div>\n" +
+							"\t\t\t\t\t<div class=\"item_content_top_4\">\n" +
+							"\t\t\t\t\t\t取件码:<span style=\"color:#05a\">"+data1[i].code+"</span><br>\n" +
+							"\t\t\t\t\t\t快递公司:"+data1[i].company+"<br>\n" +
+							"\t\t\t\t\t\t运单号码:"+data1[i].number+"<br>\n" +
+							"\t\t\t\t\t\t站点电话:"+data1[i].sysPhone+"<br>\n" +
+							"\t\t\t\t\t</div>\n" +
+							"\t\t\t\t</div>\n" +
+							"\t\t\t\t<hr>\n" +
+							"\t\t\t\t<div class=\"item_content_bottom\">\n" +
+							"\t\t\t\t\t<a href=\"qrcode.do?code="+data1[i].code+"\">二维码</a>\n" +
+							"\t\t\t\t</div>\n" +
+							"\t\t\t</div>\n" +
+							"\t\t</div>";
+					$("#status0Content").append($(item));//每次循环就追加
+				}
+
+				var data2 = data.status1;
+				for (i=0;i<data2.length;i++){
+					var item = "<div class=\"item\">\n" +
+							"\t\t\t<div class=\"imte_top\"><span>"+data2[i].outTime+"</span></div>\n" +
+							"\t\t\t<div class=\"item_content\">\n" +
+							"\t\t\t\t<div class=\"item_content_top\">\n" +
+							"\t\t\t\t\t<div class=\"item_content_top_1\">取件成功通知</div>\n" +
+							"\t\t\t\t\t<div class=\"item_content_top_2\">"+data2[i].outTime+"</div>\n" +
+							"\t\t\t\t\t<div class=\"item_content_top_3\">您有一个包裹从e栈取出了!</div>\n" +
+							"\t\t\t\t\t<div class=\"item_content_top_4\">\n" +
+							"\t\t\t\t\t\t快递公司:"+data2[i].company+"<br>\n" +
+							"\t\t\t\t\t\t运单号码:"+data2[i].number+"<br>\n" +
+							"\t\t\t\t\t\t站点电话:"+data2[i].sysPhone+"<br>\n" +
+							"\t\t\t\t\t</div>\n" +
+							"\t\t\t\t</div>\n" +
+							"\t\t\t\t<hr>\n" +
+							"\t\t\t\t<div class=\"item_content_bottom\">\n" +
+							"\t\t\t\t\t<a href=\"#\">有疑问 ? 点了也没用</a>\n" +
+							"\t\t\t\t</div>\n" +
+							"\t\t\t</div>\n" +
+							"\t\t</div>";
+					$("#status1Content").append($(item));//每次循环就追加
+				}
+			})
+		});
+	</script>
 </html>
