@@ -84,4 +84,79 @@ public class ExpressController {
         String json = JSONUtil.toJSON(msg.getData());
         return json;
     }
+
+    /**
+     * 这个方法是用户查询没有收货的快递，当用户每次点击确认查询的时候，
+     * 都是要重新发送请求重新查询
+     * @param request
+     * @param response
+     * @return
+     * 对应页面：pickExpress.html
+     */
+    @ResponseBody("wx/userExpressList.do")
+    public String expressList(HttpServletRequest request, HttpServletResponse response){
+        String userPhone = request.getParameter("userPhone");
+        //查询数据
+        List<Express> list = ExpressService.findByUserPhoneAndStatus(userPhone, 0);//直接设置为0表示查询的是未取件
+        List<BootStrapTableExpress> list2 = new ArrayList<>();
+        //将list转换成list2这样格式的集合。list2中的时间是String类型
+        for (Express e:list){
+            String inTime = DateFormatUtil.format(e.getInTime());
+            String outTime = e.getOutTime()==null?"未出库":DateFormatUtil.format(e.getOutTime());
+            String status = e.getStatus()==0?"待取件":"已取件";
+            String code = e.getCode()==null?"已取件":e.getCode();
+            BootStrapTableExpress e2 = new BootStrapTableExpress(e.getId(),e.getNumber(),e.getUserName(),e.getUserPhone(),e.getCompany(),code,inTime,outTime,status,e.getSysPhone());
+            list2.add(e2);
+        }
+        Message msg = new Message();//发送信息给前端。
+        if (list.size() == 0) {
+            msg.setStatus(-1);
+            msg.setResult("未查询到快递");
+        }else {
+            msg.setStatus(0);
+            msg.setResult("查询成功");
+            msg.setData(list2);
+        }
+        return JSONUtil.toJSON(msg);
+    }
+
+
+
+    /**
+     * 添加快递页面
+     * @param request
+     * @param response
+     * @return
+     */
+    @ResponseBody("/wx/insert.do")
+    public String insert(HttpServletRequest request, HttpServletResponse response){
+        //1.获取前端数据
+        String number = request.getParameter("number");
+        String company = request.getParameter("company");
+        String username = request.getParameter("username");
+        String userPhone = request.getParameter("userPhone");
+        System.out.println(number);
+        System.out.println(company);
+        System.out.println(username);
+        System.out.println(userPhone);
+
+
+        Express e = new Express(number,username,userPhone, company,UserUtil.getUserPhone(request.getSession()));
+        boolean flag = ExpressService.insert(e);
+
+        //下面的数据如：msg等   都会给到add.html页面中datafunction (data){});中的data
+        Message msg = new Message();
+        if (flag) {
+            //录入成功
+            msg.setStatus(0);//成功就是0
+            msg.setResult("快递录入成功！");
+        } else {
+            //录入失败
+            msg.setStatus(-1);//失败就是-1
+            msg.setResult("快递录入失败！");
+        }
+        String json = JSONUtil.toJSON(msg);
+        return json;
+    }
+
 }

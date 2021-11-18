@@ -6,7 +6,7 @@ package com.fjt.util;
 public class SMSUtil {
 
     public static boolean send(String phoneNumber,String code) {
-        System.out.println("[快递e栈]"+phoneNumber+"您的验证码："+ code +",该验证码长期有效，请勿泄露于他人！");
+        System.out.println("[快递e栈]"+phoneNumber+"您的取件码："+ code +",该验证码长期有效，请勿泄露于他人！");
         return true;
     }
 
@@ -20,6 +20,18 @@ public class SMSUtil {
         System.out.println("[快递e栈]提醒您，"+phoneNumber+"的验证码为："+ code +",您正在登录，若非本人操作，请勿泄露.");
         return true;
     }
+
+    /**
+     * 微信端页面修改信息的短信发送模拟
+     * @param phoneNumber 手机号码
+     * @param code 验证码
+     * @return
+     */
+    public static boolean updateUser(String phoneNumber,String code){
+        System.out.println("[快递e栈]提醒您，"+phoneNumber+"的验证码为："+ code +",您正在修改信息，若非本人操作，请勿泄露.");
+        return true;
+    }
+
 
 
 }

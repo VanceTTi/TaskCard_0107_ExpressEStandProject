@@ -22,6 +22,21 @@ public class ExpressService {
     }
 
     /**
+     * 查询快递员总数和快递员当天注册数
+     * @return
+     */
+    public static List<Map<String, Integer>> consoleCourier(){
+        return dao.consoleCourier();
+    }
+    /**
+     * 查询用户总数和用户当天注册数
+     * @return
+     */
+    public static List<Map<String, Integer>> consoleUser(){
+        return dao.consoleUser();
+    }
+
+    /**
      * 用于查询所有快递
      *
      * @param limit      是否分页标记,true表示分页，false表示查询所有快递
@@ -61,6 +76,16 @@ public class ExpressService {
      */
     public static List<Express> findByUserPhone(String userPhone) {
         return dao.findByUserPhone(userPhone);
+    }
+    /**
+     * 根据用户手机号码，查询他所有的快递信息
+     *
+     * @param userPhone 手机号码
+     * @param status 取件状态
+     * @return 查询的未取件的快递信息
+     */
+    public static List<Express> findByUserPhoneAndStatus(String userPhone,int status) {
+        return dao.findByUserPhoneAndStatus(userPhone,status);
     }
 
     /**
@@ -108,18 +133,19 @@ public class ExpressService {
      * 如果没有修改手机号且修改了取件状态，且取件状态=1，也就是已经取件则完成取件操作
      */
     public static boolean update(int id, Express newExpress) {
-        if (newExpress.getUserPhone() != null) {
-            dao.delete(id);
-            insert(newExpress);
-            return insert(newExpress);
-        }else {
-            boolean update = dao.update(id, newExpress);
-            Express e = dao.findByNumber(newExpress.getNumber());
-            if (newExpress.getStatus() == 1) {
-                updateStatus(e.getCode());
-            }
-            return update;
-        }
+        return dao.update(id, newExpress);
+//        if (newExpress.getUserPhone() != null) {
+//            dao.delete(id);
+//            insert(newExpress);
+//            return insert(newExpress);
+//        }else {
+//            boolean update = dao.update(id, newExpress);
+//            Express e = dao.findByNumber(newExpress.getNumber());
+//            if (newExpress.getStatus() == 1) {
+//                updateStatus(e.getCode());
+//            }
+//            return update;
+//        }
     }
 
     /**

@@ -39,7 +39,7 @@
 						<td class="text-right">手机号码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
 					</tr>
 					<tr>
-						<td class="text-right">快递状态</td><td class="content_right"><input type="radio" name="status" id="status">已签收 </td>
+						<td class="text-right">快递状态</td><td class="content_right"><input type="radio" class="status" name="status" id="status" value="1">已签收 <input name="status" class="status" type="radio" value="0">未签收</td>
 					</tr>
 					<tr>
 						<td></td><td class="content_right"><span class="btn btn-info" id="delete">立即删除</span>
@@ -72,17 +72,18 @@
 						expressId = data.data.id;//第一个data是msg的data，第二data是msg中的data属性，这个data中有id，number......
 						$("input:eq(1)").val(data.data.number);
 						$("input:eq(2)").val(data.data.company);
-						$("input:eq(3)").val(data.data.username);
+						$("input:eq(3)").val(data.data.userName);
 						$("input:eq(4)").val(data.data.userPhone);
 						//设置属性  disabled：禁止修改
 						$("input:eq(1),input:eq(2),input:eq(3),input:eq(4)").prop("disabled",true)
 						//判断status是不是等于0
 						if (data.data.status == 0) {
 							//未签收
-							$("#status").html("未签收");
+							//未签收
+							$(".status:eq(1)").prop("checked",true);
 						} else {
 							//已签收
-							$("#status").html("已签收");
+							$(".status:eq(0)").prop("checked",true);
 						}
 					} else {
 

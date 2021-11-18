@@ -18,6 +18,17 @@ public interface BaseExpressDao {
     List<Map<String,Integer>> console();
 
     /**
+     * 查询快递员总数和快递员当天注册数
+     * @return
+     */
+    List<Map<String, Integer>> consoleCourier();
+    /**
+     * 查询用户总数和用户当天注册数
+     * @return
+     */
+    List<Map<String, Integer>> consoleUser();
+
+    /**
      * 用于查询所有快递
      * @param limit 是否分页标记,true表示分页，false表示查询所有快递
      * @param offset SQL语句的起始索引
@@ -46,6 +57,13 @@ public interface BaseExpressDao {
      * @return 查询的快递信息
      */
     List<Express> findByUserPhone(String userPhone);
+    /**
+     * 根据用户手机号码，查询他所有的快递信息
+     * @param userPhone 手机号码
+     * @param status 状态码
+     * @return 查询的是没有收货的快递信息
+     */
+    List<Express> findByUserPhoneAndStatus(String userPhone,int status);
     /**
      * 根据录入人手机号码，查询他所有的快递信息
      * @param sysPhone 手机号码

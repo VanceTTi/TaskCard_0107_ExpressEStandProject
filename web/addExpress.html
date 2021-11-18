@@ -117,7 +117,7 @@
 				<input id="noncestr" type="hidden" value="${nonceStr}" />
 				<input id="signature" type="hidden" value="${signature}" />
 				<input id="appId" type="hidden" value="${appId}" />
-			<form>
+			<form id="form">
 				<input id="PageContext" type="hidden" value="${pageContext.request.contextPath}" />
 				<input id="wxCode" type="hidden" value="${wxCode}" />
 				<div class="userInputCont">
@@ -140,11 +140,62 @@
                          </select>  
 					</div>
 				</div>
+				<!--			<div class="submitBtn">录入信息</div>-->
+				<button type="submit" class="submitBtn">录入信息</button>
 			</form>
-			<div class="submitBtn">录入信息</div>
+
 		</div>
 	</div>
 </div>
+	<!--引入jqury和layer-->
+	<script src="/qrcode/jquery2.1.4.js"></script>
+	<script src="/layer/layer.js"></script>
+
+	<!--添加脚本，控制id=“form”-->
+	<script>
+		$(function (){//页面加载完后加载
+			$("#form").submit(function (){//submit点击提交后触发
+
+
+					var windowId = layer.load();//转圈
+					//:eq(index)匹配一个给定索引值的元素
+					var number = $("#expressId").val();
+					var username = $("#username").val();
+					var userPhone = $("#phone").val();
+					var company = $("#company").val();
+					$.post("/wx/insert.do", {
+						//key(新起的名字):value（上面的值）
+						number: number,
+						company: company,
+						username: username,
+						userPhone: userPhone
+					}, function (data) {//后端传来的数据就是这里的data
+						//等后端传来数据后，关闭windowId的窗口
+						layer.close(windowId);
+						//提示：录入成功
+						layer.msg(data.result);
+						if (data.status == 0) {
+							//录入成功
+							//成功之后就将输入框恢复默认
+							// $("input:eq(0)").val("");
+							// $("input:eq(1)").val("");
+							// $("input:eq(2)").val("");
+							// $("input:eq(3)").val("");
+							//也可以使用两行代码
+							$("input").val("");//所有input置空
+							$("input:eq(1)").val("顺丰快递");//单独给1默认为顺丰快递
+							//
+						} else {
+							//录入失败
+							//直接上面有提示所以就不用写了
+						}
+					});
+					return false;
+
+
+			});
+		});
+	</script>
 <script type="text/javascript">
 	
 </script>

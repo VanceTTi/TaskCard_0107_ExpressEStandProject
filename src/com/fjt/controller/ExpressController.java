@@ -40,6 +40,38 @@ public class ExpressController {
         String json = JSONUtil.toJSON(msg);//得到json数据
         return json;//将json返回出去，mvc会响应给前端
     }
+    @ResponseBody("/express/consoleCourier.do")
+    public String consoleCourier(HttpServletRequest request, HttpServletResponse response){
+        //调用Service层的console()方法
+        List<Map<String, Integer>> data = ExpressService.consoleCourier();
+        Message msg = new Message();//创建Message对象，作用看bean类
+        if (data.size() == 0) {
+            //如果查询失败,则给-1
+            msg.setStatus(-1);
+        } else {
+            //如果console()查询成功
+            msg.setStatus(0);
+        }
+        msg.setData(data);//携带的一组数据
+        String json = JSONUtil.toJSON(msg);//得到json数据
+        return json;//将json返回出去，mvc会响应给前端
+    }
+    @ResponseBody("/express/consoleUser.do")
+    public String consoleUser(HttpServletRequest request, HttpServletResponse response){
+        //调用Service层的console()方法
+        List<Map<String, Integer>> data = ExpressService.consoleUser();
+        Message msg = new Message();//创建Message对象，作用看bean类
+        if (data.size() == 0) {
+            //如果查询失败,则给-1
+            msg.setStatus(-1);
+        } else {
+            //如果console()查询成功
+            msg.setStatus(0);
+        }
+        msg.setData(data);//携带的一组数据
+        String json = JSONUtil.toJSON(msg);//得到json数据
+        return json;//将json返回出去，mvc会响应给前端
+    }
 
     /**
      * 快递的  列表，分页等等

@@ -25,6 +25,11 @@ public class ExpressDaoMysql implements BaseExpressDao {
             "COUNT(STATUS=0 OR NULL) data2_size," +
             "COUNT(TO_DAYS(INTIME)=TO_DAYS(NOW()) AND STATUS=0 OR NULL) data2_day" +
             " FROM EXPRESS";
+    //快递员总数
+    public static final String SQL_CONSOLE_COURIER = "SELECT COUNT(courierid) courier_size , COUNT(TO_DAYS(registrationdate)=TO_DAYS(NOW()) OR NULL) courier_day FROM COURIER";
+    //用户总数
+    public static final String SQL_CONSOLE_USER = "SELECT COUNT(UID) user_size,COUNT(TO_DAYS(registrationdate)=TO_DAYS(NOW()) OR NULL) user_day FROM user";
+
     //用于查询数据库中的 所有 快递信息
     //public static final String SQL_FIND_ALL = "select * from express";
     public static final String SQL_FIND_ALL = "SELECT * FROM EXPRESS";
@@ -39,6 +44,10 @@ public class ExpressDaoMysql implements BaseExpressDao {
     public static final String SQL_FIND_BY_SYSPHONE = "select * from express where sysphone=?";
     //通过用户手机号查询快递信息
     public static final String SQL_FIND_BY_USERPHONE = "select * from express where userphone=?";
+
+    //通过用户手机号查询快递信息
+    public static final String SQL_FIND_BY_USERPHONE_AND_STATUS = "select * from express where userphone=? and status=?";
+
     //录入快递
     public static final String SQL_INSERT = "insert into express (number,username,userphone,company,code,intime,status,sysphone) values(?,?,?,?,?,now(),0,?)";
     //快递修改，只修改单号、姓名、公司，手机号的修改选择删除后再添加的方式
@@ -92,6 +101,81 @@ public class ExpressDaoMysql implements BaseExpressDao {
         }
         return data;
     }
+
+    /**
+     * 查询快递员总数和快递员当天注册数
+     * @return
+     */
+    public List<Map<String, Integer>> consoleCourier() {
+        ArrayList<Map<String,Integer>> data = new ArrayList<>();
+        Connection conn = null;//通过德鲁伊来获取连接
+        PreparedStatement state = null;
+        ResultSet resultSet = null;
+        try {
+            //1.  获取数据库连接
+            conn = DruidUtil.getConnection();
+            //2.  预编译SQL语句
+            state = conn.prepareStatement(SQL_CONSOLE_COURIER);
+            //3.  填充参数
+            //无参数填充
+            //4.  执行SQL语句
+            resultSet = state.executeQuery();
+            //5.  获取执行结果
+            if (resultSet.next()) {
+                int courier_size = resultSet.getInt("courier_size");
+                int courier_day = resultSet.getInt("courier_day");
+                Map data1 = new HashMap();
+                data1.put("courier_size",courier_size);
+                data1.put("courier_day",courier_day);
+                data.add(data1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            //6.  资源的释放
+            DruidUtil.close(conn,state,resultSet);
+        }
+        return data;
+    }
+
+    /**
+     * 查询用户总数和用户当天注册数
+     *
+     * @return
+     */
+    @Override
+    public List<Map<String, Integer>> consoleUser() {
+        ArrayList<Map<String,Integer>> data = new ArrayList<>();
+        Connection conn = null;//通过德鲁伊来获取连接
+        PreparedStatement state = null;
+        ResultSet resultSet = null;
+        try {
+            //1.  获取数据库连接
+            conn = DruidUtil.getConnection();
+            //2.  预编译SQL语句
+            state = conn.prepareStatement(SQL_CONSOLE_USER);
+            //3.  填充参数
+            //无参数填充
+            //4.  执行SQL语句
+            resultSet = state.executeQuery();
+            //5.  获取执行结果
+            if (resultSet.next()) {
+                int user_size = resultSet.getInt("user_size");
+                int user_day = resultSet.getInt("user_day");
+                Map data1 = new HashMap();
+                data1.put("user_size",user_size);
+                data1.put("user_day",user_day);
+                data.add(data1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            //6.  资源的释放
+            DruidUtil.close(conn,state,resultSet);
+        }
+        return data;
+    }
+
 
     /**
      * 用于查询所有快递
@@ -275,6 +359,52 @@ public class ExpressDaoMysql implements BaseExpressDao {
             DruidUtil.close(connection,preparedStatement,resultSet);
         }
         return data;
+    }
+
+    /**
+     * 根据用户手机号码，查询他所有的快递信息
+     *
+     * @param userPhone 手机号码
+     * @param status    状态码
+     * @return 查询的是没有收货的快递信息
+     */
+    @Override
+    public List<Express> findByUserPhoneAndStatus(String userPhone, int status) {
+        ArrayList<Express> data = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            //1.获取连接
+            connection = DruidUtil.getConnection();
+            //2.预编译SQL语句
+            preparedStatement = connection.prepareStatement(SQL_FIND_BY_USERPHONE_AND_STATUS);
+            //3.填充数据
+            preparedStatement.setString(1,userPhone);
+            preparedStatement.setInt(2,status);
+            //4.执行sql语句
+            resultSet = preparedStatement.executeQuery();
+            //5.获取数据
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String number = resultSet.getString("number");
+                String userName = resultSet.getString("username");
+                String company = resultSet.getString("company");
+                String code = resultSet.getString("code");
+                Timestamp inTime = resultSet.getTimestamp("intime");
+                Timestamp outTime = resultSet.getTimestamp("outtime");
+                String sysPhone = resultSet.getString("sysphone");
+                Express express = new Express(id,number,userName,userPhone,company,code,inTime,outTime,status,sysPhone);
+                data.add(express);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            //6.关闭资源
+            DruidUtil.close(connection,preparedStatement,resultSet);
+        }
+        return data;
+
     }
 
     /**

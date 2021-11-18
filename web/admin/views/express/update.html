@@ -42,7 +42,7 @@
 						<td class="text-right">手机号码</td><td class="content_right"><input class="input" placeholder="请输入姓名"></td>
 					</tr>
 					<tr>
-						<td class="text-right">快递状态</td><td class="content_right"><input type="radio" name="status">已签收  <input name="status" type="radio">未签收</td>
+						<td class="text-right">快递状态</td><td class="content_right"><input type="radio" class="status" name="status" value="1">已签收  <input name="status" class="status" type="radio" value="0">未签收</td>
 					</tr>
 					<tr>
 						<td></td><td class="content_right"><span class="btn btn-info" id="update">立即修改</span> <span class="btn">重置</span> </td>
@@ -79,7 +79,7 @@
 						g_userPhone = data.data.userPhone;
 						$("input:eq(1)").val(data.data.number);
 						$("input:eq(2)").val(data.data.company);
-						$("input:eq(3)").val(data.data.username);
+						$("input:eq(3)").val(data.data.userName);
 						$("input:eq(4)").val(data.data.userPhone);
 						//判断status是不是等于0
 						if (data.data.status == 0) {

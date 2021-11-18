@@ -22,7 +22,8 @@ public class UserUtil {
     public static String getUserPhone(HttpSession session){
         //todo的意思就是要去做的事
         //TODO:还没有编写快递柜子端，未存储任何录入人信息
-       return "18888888888";
+       //return "18888888888";
+        return (String) session.getAttribute("userPhone");
     }
 
     /**
@@ -32,6 +33,7 @@ public class UserUtil {
      * @return
      */
     public static String getLoginSms(HttpSession session,String userPhone) {
+        session.setAttribute("userPhone",userPhone);
         return (String) session.getAttribute(userPhone);
     }
 

@@ -207,23 +207,88 @@
 			<div class="userInputCont">
 				<div class="inputTypeCont">
 					<div class="inputTitle">新的名称</div>
-					<input type="text" class="commonInput" name="name" id="name" placeholder="请输入真实姓名..." disabled>
+					<!--去除禁止输入的属性：disabled-->
+					<input type="text" class="commonInput" name="name" id="name" placeholder="请输入真实姓名..." >
 				</div>
 				<div class="inputTypeCont">
 					<div class="inputTitle">新的手机</div>
-					<input type="text" class="commonInputFunc userOldPhone" id="usernum" name="usernum" placeholder="请输入新手机号码" disabled>
+					<!--去除禁止输入的属性：disabled-->
+					<input type="text" class="commonInputFunc userOldPhone" id="usernum" name="usernum" placeholder="请输入新手机号码" >
 					<div class="commonFuncBtnModify userModifyPhone"></div>
 				</div>
 				<div class="inputTypeCont">
 					<div class="inputTitle">短信</div>
-					<input type="text" class="verifiInput" id="username" name="username" placeholder="请输入验证码...">
-					<input type="button" class="verifiBtn" value="发送验证码">
+					<input type="text" class="verifiInput" id="usersms" name="usersms" placeholder="请输入验证码...">
+					<!--id="upusercode"-->
+					<input type="button" class="verifiBtn" id="btnSendCode1" value="发送验证码" onclick="sendMessage1()">
 				</div>
 			</div>
 		</form>
 
-		<div class="submitBtn">修改信息</div>
+		<div class="submitBtn" onclick="upinfo()">修改信息</div>
 	</div>
 </div>
 </body>
+	<!---->
+	<script src="/qrcode/jquery2.1.4.js"></script>
+	<script src="/layer/layer.js"></script>
+	<script type="text/javascript">
+		var phoneReg = /(^1[3|4|5|7|8]\d{9}$)|(^09\d{8}$)/;
+		var count = 10;//10s的间隔方便测试，也可以60s
+		var InterValObj1;
+		var curCount1;
+
+		function sendMessage1() {
+			curCount1 = count;
+			var phone = $.trim($('#usernum').val());
+			if (!phoneReg.test(phone)) {
+				alert(" 请输入有效的手机号码");
+				return false;
+			}
+
+			$("#btnSendCode1").attr("disabled", "true");
+			$("#btnSendCode1").val(+curCount1 + "秒再获取");
+			InterValObj1 = window.setInterval(SetRemainTime1, 1000);
+
+			var windowId = layer.load();
+			$.getJSON("/wx/loginSms.do",null,function (data){
+				//前台收到的是：{status:0/1,result:成功/失败}
+				layer.close(windowId);
+				layer.msg(data.result);
+			});
+
+		}
+		function upinfo(){
+			var windowId = layer.load();//转圈
+			//获取数据
+			var name = $("#name").val();
+			var usernum = $("#usernum").val();
+			var usersms = $("#usersms").val();
+			$.getJSON("/wx/upUserIdCard.do",{
+				name:name,
+				usernum:usernum,
+				usersms:usersms
+			},function (data){
+				layer.close(windowId);//关闭转圈
+				layer.msg(data.result)//弹窗提示，后台发送的消息，如：修改成功
+			});
+
+		}
+
+
+		$(function (){
+			<!--先显示-->
+			var windowId = layer.load();//加载的图像弹出
+			$.getJSON("/wx/findUser.do",null,function (data) {
+				layer.close(windowId);//关闭加载图像
+				//上面data就是后台传过来json
+				if (data.status == 0) {
+					$("#name").val(data.data.nickname);
+					$("#usernum").val(data.data.uPhone);
+				}
+			});
+		});
+	</script>
+
+
 </html>
